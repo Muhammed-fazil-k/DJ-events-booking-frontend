@@ -1,7 +1,10 @@
 {
+  //module alias instead of using ../../ this ,use @/
   "compilerOptions": {
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"]
+      "@/components/*":["components/*"],
+      "@/styles/*":["styles/*"]
     }
   }
 }
