@@ -11,9 +11,9 @@ export default function Home({events}) {
   return (
     <Layout>
       <h1>Events</h1>
-      {events.length ===0 && <h3>No events to show</h3>}
-      {events.map(evt=>(
-        <EventItem key={evt.id} evt={evt}/>
+      {events.length === 0 && <h3>No events to show</h3>}
+      {events.map((evt) => (
+        <EventItem key={evt.id} evt={evt.attributes} />
       ))}
     </Layout>
   )
@@ -22,8 +22,9 @@ export default function Home({events}) {
 //server will make 
 export async function getStaticProps(){
   //make req to api routes/serverless fns
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const res = await fetch(`${API_URL}/api/events?populate=*&sort=date`);
+  const json = await res.json();
+  const events = json.data
   return {
     props:{events},
     revalidate:1

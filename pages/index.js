@@ -13,7 +13,7 @@ export default function Home({events}) {
       <h1>Upcoming Events</h1>
       {events.length ===0 && <h3>No events to show</h3>}
       {events.map(evt=>(
-        <EventItem key={evt.id} evt={evt}/>
+        <EventItem key={evt.id} evt={evt.attributes}/>
       ))}
       {events.length > 0 && (
         <Link className='btn-secondary' href='/events'>View all events</Link>
@@ -25,10 +25,12 @@ export default function Home({events}) {
 //server will make 
 export async function getStaticProps(){
   //make req to api routes/serverless fns
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const res = await fetch(`${API_URL}/api/events?populate=*&sort=date&pagination[limit]=3`);
+  const json = await res.json();
+  const events = json.data
+  
   return {
-    props:{events : events.slice(0,3)},
-    revalidate:1
+    props:{events },
+    revalidate:1 //seconds to check if data changes on getStatisProps
   }
 }
