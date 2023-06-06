@@ -22,9 +22,11 @@ export default function Home({events}) {
   )
 }
 
-//server will make 
+//During project build,this code makes static api call and fetch data
+//For each 1 second code will revalidate that data
 export async function getStaticProps(){
   //make req to api routes/serverless fns
+  //use populate to get all datas like referential ans image values
   const res = await fetch(`${API_URL}/api/events?populate=*&sort=date&pagination[limit]=3`);
   const json = await res.json();
   const events = json.data

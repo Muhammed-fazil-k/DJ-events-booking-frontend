@@ -6,16 +6,31 @@ import { API_URL } from "@/config/index";
 import styles from "@/styles/Event.module.css";
 import { FaPencilAlt, FaTimes } from "react-icons/fa";
 import Link from "next/link";
-export default function EventPage({ evt }) {
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+export default function EventPage({ evt ,id}) {
   const router = useRouter();
-  const deleteEvent = (e) => {
-    console.log("delete");
+  const deleteEvent = async (e) => {
+    if(confirm('Are you sure?')){
+      const res = await fetch(`${API_URL}/api/events/${id}`,{
+        method:"DELETE",
+
+      })
+      const data = await res.json()
+      if(!res.ok){
+        toast.error(data.message)
+      }else{
+        router.push('/events')
+      }
+    }
   };
   return (
     <Layout>
+
       <div className={styles.event}>
         <div className={styles.controls}>
-          <Link href={`/events/edit/${evt.id}`}>
+          <Link href={`/events/edit/${id}`}>
             <FaPencilAlt /> Edit event
           </Link>
           <Link href="#" onClick={deleteEvent} className={styles.delete}>
@@ -26,9 +41,13 @@ export default function EventPage({ evt }) {
           {new Date(evt.date).toLocaleDateString('en-US')} at {evt.time}
         </span>
         <h1>{evt.name}</h1>
+        <ToastContainer/>
         {evt.image && (
           <div className={styles.image}>
-            <Image src={evt.image.data.attributes.formats.medium.url} width={960} height={600} />
+            {
+              evt.image.data && <Image alt="dj events" src={evt.image.data.attributes.formats.medium.url} width={960} height={600} />
+            }
+            
           </div>
         )}
         <h3>Performers:</h3>
@@ -56,7 +75,6 @@ export async function getStaticPaths() {
   //   {params:{slug:2}}
   // ]
   const paths = events.map((ev) => ({ params: { slug: ev.attributes.slug } }));
-  console.log(paths);
 
   return {
     paths,
@@ -70,7 +88,8 @@ export async function getStaticProps({ params: { slug } }) {
   const events = json.data
   return {
     props: {
-      evt:events[0].attributes
+      evt:events[0].attributes,
+      id:events[0].id
     },
     revalidate: 1,
   };
