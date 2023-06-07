@@ -1,16 +1,15 @@
 //module alias
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import { API_URL } from "@/config/index";
+import { API_URL,PER_PAGE } from "@/config/index";
 import EventItem from "@/components/EventItem";
+import Pagination from "@/components/Pagination";
 
-const PER_PAGE = 2;
 
 
 //index.js will be the base page of this application
 //Create a common layout which can be used for all pages
 export default function EventsPage({ events,page,count}) {
-  const totalPage = count/PER_PAGE
   return (
     <Layout>
       <h1>Events</h1>
@@ -18,10 +17,8 @@ export default function EventsPage({ events,page,count}) {
       {events.map((evt) => (
         <EventItem key={evt.id} evt={evt.attributes} />
       ))}
-
-      {page>1 && <Link className="btn-secondary" href={`/events?page=${+page-1}`}>Prev</Link>}
-      {page<totalPage && <Link className="btn-secondary" href={`/events?page=${+page+1}`}>Next</Link>}
-
+      <Pagination page ={page} count={count} />
+  
     </Layout>
   );
 }
