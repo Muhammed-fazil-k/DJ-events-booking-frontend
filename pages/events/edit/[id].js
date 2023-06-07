@@ -1,4 +1,5 @@
 import Layout from "@/components/Layout";
+import Modal from "@/components/Modal";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -23,6 +24,7 @@ export default function EditEventPage({ evt }) {
     time: eventDetails.time,
     description: eventDetails.description,
   });
+  const [showModal,setShowModal] = useState(false)
   const [imgPreview, setImgPreview] = useState(
     evt.attributes.image
       ? evt.attributes.image.data.attributes.formats.thumbnail.url
@@ -147,10 +149,13 @@ export default function EditEventPage({ evt }) {
         </div>
       )}
       <div>
-        <button className="btn-secondary">
+        <button onClick={()=>{setShowModal(true)}} className="btn-secondary">
           <FaImage/> Set image
         </button>
       </div>
+      <Modal show={showModal} onClose={()=>{setShowModal(false)}}>
+        IMAGE UPLOAD
+      </Modal>
     </Layout>
   );
 }
