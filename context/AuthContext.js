@@ -1,30 +1,89 @@
-import { createContext, useState } from "react"
+import { createContext, useEffect, useState } from "react"
+import { NEXT_URL } from "@/config/index"
+import { useRouter } from "next/router"
 
 const AuthContext = createContext()
 
 export const AuthProvider = ({children})=>{
+    const router = useRouter()
     const [user,setUser] = useState(null)
     const [error,setError] = useState(null)
+    useEffect(()=>{
+        checkUserLoggedIn()
+    },[])
+
 
     //Register
     const register = async (user)=>{
-        console.log(user);
+        const res = await fetch(`${NEXT_URL}/api/register`,{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(user)
+
+        })
+        const data = await res.json()
+        if(res.ok){
+            setUser(data.user)
+            router.push('/account/dashboard')
+        }else{
+            setError(data.message)
+            setTimeout(()=>{setError(null)},10)
+        }
     }
 
     //Login
     //in strapi 
     const login = async ({email:identifier,password})=>{
-        console.log({identifier,password});
+        const res = await fetch(`${NEXT_URL}/api/login`,{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                identifier,password
+            })
+
+        })
+        const data = await res.json()
+        console.log(data);
+        if(res.ok){
+            setUser(data.user)
+            router.push('/account/dashboard')
+        }else{
+            setError(data.message)
+            setTimeout(()=>{setError(null)},10)
+        }
     }
 
     //Logout
     const logout = async ()=>{
-        console.log('logout');
+        const res = await fetch(`${NEXT_URL}/api/logout`,{
+            method:"POST",
+        })
+        const data = await res.json()
+        if(res.ok){
+            setUser(null)
+            router.push('/')
+        }else{
+            setError(data.message)
+            setTimeout(()=>{setError(null)},10)
+        }
     }
 
     //check if user is logged in
     const checkUserLoggedIn = async (user)=>{
-        console.log('check');
+        const res = await fetch(`${NEXT_URL}/api/user`)
+        const data = await res.json()
+
+        if(res.ok){
+            setUser(data)
+            router.push('/account/dashboard')
+        }else{
+            setUser(null)
+        }
+
     }
 
     return (

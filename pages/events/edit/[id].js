@@ -12,7 +12,6 @@ import { API_URL } from "@/config/index";
 import moment from "moment/moment";
 import { FaImage } from "react-icons/fa";
 export default function EditEventPage({ evt }) {
-  console.log(evt.date);
   const router = useRouter();
   const eventDetails = evt.attributes;
   const [values, setValues] = useState({
@@ -26,7 +25,7 @@ export default function EditEventPage({ evt }) {
   });
   const [showModal,setShowModal] = useState(false)
   const [imgPreview, setImgPreview] = useState(
-    evt.attributes.image
+    evt.attributes.image.data
       ? evt.attributes.image.data.attributes.formats.thumbnail.url
       : null
   );
@@ -160,10 +159,12 @@ export default function EditEventPage({ evt }) {
   );
 }
 
-export async function getServerSideProps({ params: { id } }) {
+export async function getServerSideProps({ params: { id },req }) {
   const res = await fetch(`${API_URL}/api/events/${id}?populate=*`);
   const data = await res.json();
-  console.log(data);
+
+
+  console.log(req.headers.cookie);
   return {
     props: {
       evt: data.data,

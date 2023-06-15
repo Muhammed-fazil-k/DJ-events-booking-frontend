@@ -1,5 +1,5 @@
 import Layout from "@/components/Layout";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "@/styles/AuthForm.module.css";
 import { FaUser } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
@@ -13,6 +13,11 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const {register,error} = useContext(AuthContext);
+
+useEffect(()=>{
+  error && toast.error(error)
+})
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if(password!==passwordConfirm){
